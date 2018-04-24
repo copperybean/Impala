@@ -110,3 +110,8 @@ class TestDdlBase(ImpalaTestSuite):
     owner_name = self._get_property("Owner:", table_name)
     owner_type = self._get_property("OwnerType:", table_name)
     return (owner_name, owner_type)
+
+  def _get_db_comment(self, db_name):
+    """Extracts the DB comment from the output of DESCRIBE DATABASE"""
+    result = self.client.execute("describe database {0}".format(db_name))
+    return result.data[0].split('\t')[2]

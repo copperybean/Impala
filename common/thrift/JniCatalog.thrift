@@ -52,7 +52,7 @@ enum TDdlType {
   GRANT_PRIVILEGE,
   REVOKE_PRIVILEGE,
   TRUNCATE_TABLE,
-  // COMMENT_ON, BACKPORT NOTE: not backported
+  COMMENT_ON,
   ALTER_DATABASE
 }
 
@@ -705,6 +705,14 @@ struct TGetCatalogUsageResponse{
   // List of the most frequently accessed (in terms of number of metadata operations)
   // tables.
   2: required list<TTableUsageMetrics> frequently_accessed_tables
+}
+
+struct TCommentOnParams {
+  // Name of comment to alter. When this field is not set, the comment will be removed.
+  1: optional string comment
+
+  // Name of database to alter.
+  2: optional string db
 }
 
 // Response to GetCatalogServerMetrics() call.

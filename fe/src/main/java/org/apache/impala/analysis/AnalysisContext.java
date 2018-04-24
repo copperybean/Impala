@@ -153,6 +153,7 @@ public class AnalysisContext {
     public UpdateStmt getUpdateStmt() { return (UpdateStmt) stmt_; }
     public boolean isDeleteStmt() { return stmt_ instanceof DeleteStmt; }
     public DeleteStmt getDeleteStmt() { return (DeleteStmt) stmt_; }
+    public boolean isCommentOnStmt() { return stmt_ instanceof CommentOnStmt; }
 
     public boolean isAlterDbStmt() { return stmt_ instanceof AlterDbStmt; }
 
@@ -168,7 +169,7 @@ public class AnalysisContext {
           isCreateUdaStmt() || isDropFunctionStmt() || isCreateTableAsSelectStmt() ||
           isCreateDataSrcStmt() || isDropDataSrcStmt() || isDropStatsStmt() ||
           isCreateDropRoleStmt() || isGrantRevokeStmt() || isTruncateStmt() ||
-          isAlterDbStmt();
+          isCommentOnStmt() || isAlterDbStmt();
     }
 
     private boolean isViewMetadataStmt() {
@@ -356,6 +357,10 @@ public class AnalysisContext {
       return (ShowCreateFunctionStmt) stmt_;
     }
 
+    public CommentOnStmt getCommentOnStmt() {
+      Preconditions.checkState(isCommentOnStmt());
+      return (CommentOnStmt) stmt_;
+    }
 
     public AlterDbStmt getAlterDbStmt() {
       Preconditions.checkState(isAlterDbStmt());

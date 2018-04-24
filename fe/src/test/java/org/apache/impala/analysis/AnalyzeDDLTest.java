@@ -3872,6 +3872,7 @@ public class AnalyzeDDLTest extends FrontendTestBase {
   }
 
   @Test
+<<<<<<< HEAD
   public void TestAlterDatabaseSetOwner() {
     String[] ownerTypes = new String[]{"user", "role"};
     for (String ownerType : ownerTypes) {
@@ -3920,6 +3921,14 @@ public class AnalyzeDDLTest extends FrontendTestBase {
           "set owner %s foo", ownerType), "ALTER VIEW not allowed on a table: " +
           "functional.alltypes");
     }
+  }
+
+  public void TestCommentOn() {
+    AnalyzesOk("comment on database functional is 'comment'");
+    AnalyzesOk("comment on database functional is ''");
+    AnalyzesOk("comment on database functional is null");
+    AnalysisError("comment on database doesntexist is 'comment'",
+        "Database does not exist: doesntexist");
   }
 
   private static String buildLongOwnerName() {

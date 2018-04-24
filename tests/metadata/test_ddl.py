@@ -196,6 +196,21 @@ class TestDdlStatements(TestDdlBase):
     self.run_test_case('QueryTest/create-database', vector, use_db=unique_database,
         multiple_impalad=self._use_multiple_impalad(vector))
 
+  def test_comment_on_database(self, vector, unique_database):
+    comment = self._get_db_comment(unique_database)
+    assert '' == comment
+
+    self.client.execute("comment on database {0} is 'comment'".format(unique_database))
+    comment = self._get_db_comment(unique_database)
+    assert 'comment' == comment
+
+    self.client.execute("comment on database {0} is ''".format(unique_database))
+    comment = self._get_db_comment(unique_database)
+    assert '' == comment
+
+    self.client.execute("comment on database {0} is null".format(unique_database))
+    comment = self._get_db_comment(unique_database)
+    assert '' == comment
 
   def test_alter_database_set_owner(self, vector, unique_database):
     self.client.execute("alter database {0} set owner user foo_user".format(
