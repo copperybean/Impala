@@ -3741,6 +3741,30 @@ public class ParserTest extends FrontendTestBase {
   }
 
   @Test
+  public void TestCommentOn() {
+    ParsesOk("COMMENT ON DATABASE db IS 'comment'");
+    ParsesOk("COMMENT ON DATABASE db IS ''");
+    ParsesOk("COMMENT ON DATABASE db IS NULL");
+    ParserError("COMMENT ON DATABASE IS 'comment'");
+    ParserError("COMMENT ON DATABASE db IS");
+
+    for (String tbl : new String[]{"db.t", "t"}) {
+      ParsesOk(String.format("COMMENT ON TABLE %s IS 'comment'", tbl));
+      ParsesOk(String.format("COMMENT ON TABLE %s IS ''", tbl));
+      ParsesOk(String.format("COMMENT ON TABLE %s IS NULL", tbl));
+
+      ParsesOk(String.format("COMMENT ON VIEW %s IS 'comment'", tbl));
+      ParsesOk(String.format("COMMENT ON VIEW %s IS ''", tbl));
+      ParsesOk(String.format("COMMENT ON VIEW %s IS NULL", tbl));
+    }
+    ParserError("COMMENT ON TABLE IS 'comment'");
+    ParserError("COMMENT ON TABLE tbl IS");
+
+    ParserError("COMMENT ON VIEW IS 'comment'");
+    ParserError("COMMENT ON VIEW tbl IS");
+  }
+
+  @Test
   public void TestAlterDatabaseSetOwner() {
     for (String valid : new String[]{"foo", "user", "owner"}) {
       ParsesOk(String.format("ALTER DATABASE %s SET OWNER USER %s", valid, valid));
