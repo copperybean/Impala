@@ -2406,8 +2406,86 @@ public class AuthorizationStmtTest extends FrontendTestBase {
         .error(selectError("functional_kudu.notbl"), onServer(allExcept(
             TPrivilegeLevel.ALL, TPrivilegeLevel.OWNER, TPrivilegeLevel.SELECT)))
         .error(selectError("functional_kudu.notbl"), onDatabase("functional_kudu",
-            allExcept(TPrivilegeLevel.ALL, TPrivilegeLevel.OWNER,
-            TPrivilegeLevel.SELECT)));
+            allExcept(TPrivilegeLevel.ALL, TPrivilegeLevel.SELECT)));
+  }
+
+  @Test
+  public void testCommentOn() throws ImpalaException {
+    // Comment on database.
+    authorize("comment on database functional is 'comment'")
+        .ok(onServer(TPrivilegeLevel.ALL))
+        .ok(onServer(TPrivilegeLevel.ALTER))
+        .ok(onDatabase("functional", TPrivilegeLevel.ALL))
+        .ok(onDatabase("functional", TPrivilegeLevel.ALTER))
+        .error(alterError("functional"))
+        .error(alterError("functional"), onServer(allExcept(
+            TPrivilegeLevel.ALL, TPrivilegeLevel.ALTER)))
+        .error(alterError("functional"), onDatabase("functional", allExcept(
+            TPrivilegeLevel.ALL, TPrivilegeLevel.ALTER)));
+
+    // Comment on table.
+    authorize("comment on table functional.alltypes is 'comment'")
+        .ok(onServer(TPrivilegeLevel.ALL))
+        .ok(onServer(TPrivilegeLevel.ALTER))
+        .ok(onDatabase("functional", TPrivilegeLevel.ALL))
+        .ok(onDatabase("functional", TPrivilegeLevel.ALTER))
+        .ok(onTable("functional", "alltypes", TPrivilegeLevel.ALL))
+        .ok(onTable("functional", "alltypes", TPrivilegeLevel.ALTER))
+        .error(alterError("functional.alltypes"))
+        .error(alterError("functional.alltypes"), onServer(allExcept(
+            TPrivilegeLevel.ALL, TPrivilegeLevel.ALTER)))
+        .error(alterError("functional.alltypes"), onDatabase("functional", allExcept(
+            TPrivilegeLevel.ALL, TPrivilegeLevel.ALTER)))
+        .error(alterError("functional.alltypes"), onTable("functional", "alltypes",
+            allExcept(TPrivilegeLevel.ALL, TPrivilegeLevel.ALTER)));
+
+    // Comment on view.
+    authorize("comment on view functional.alltypes_view is 'comment'")
+        .ok(onServer(TPrivilegeLevel.ALL))
+        .ok(onServer(TPrivilegeLevel.ALTER))
+        .ok(onDatabase("functional", TPrivilegeLevel.ALL))
+        .ok(onDatabase("functional", TPrivilegeLevel.ALTER))
+        .ok(onTable("functional", "alltypes_view", TPrivilegeLevel.ALL))
+        .ok(onTable("functional", "alltypes_view", TPrivilegeLevel.ALTER))
+        .error(alterError("functional.alltypes_view"))
+        .error(alterError("functional.alltypes_view"), onServer(allExcept(
+            TPrivilegeLevel.ALL, TPrivilegeLevel.ALTER)))
+        .error(alterError("functional.alltypes_view"), onDatabase("functional", allExcept(
+            TPrivilegeLevel.ALL, TPrivilegeLevel.ALTER)))
+        .error(alterError("functional.alltypes_view"), onTable("functional",
+            "alltypes_view", allExcept(TPrivilegeLevel.ALL, TPrivilegeLevel.ALTER)));
+
+    // Comment on table column.
+    authorize("comment on column functional.alltypes.id is 'comment'")
+        .ok(onServer(TPrivilegeLevel.ALL))
+        .ok(onServer(TPrivilegeLevel.ALTER))
+        .ok(onDatabase("functional", TPrivilegeLevel.ALL))
+        .ok(onDatabase("functional", TPrivilegeLevel.ALTER))
+        .ok(onTable("functional", "alltypes", TPrivilegeLevel.ALL))
+        .ok(onTable("functional", "alltypes", TPrivilegeLevel.ALTER))
+        .error(alterError("functional.alltypes"))
+        .error(alterError("functional.alltypes"), onServer(allExcept(
+            TPrivilegeLevel.ALL, TPrivilegeLevel.ALTER)))
+        .error(alterError("functional.alltypes"), onDatabase("functional", allExcept(
+            TPrivilegeLevel.ALL, TPrivilegeLevel.ALTER)))
+        .error(alterError("functional.alltypes"), onTable("functional", "alltypes",
+            allExcept(TPrivilegeLevel.ALL, TPrivilegeLevel.ALTER)));
+
+    // Comment on view column.
+    authorize("comment on column functional.alltypes_view.id is 'comment'")
+        .ok(onServer(TPrivilegeLevel.ALL))
+        .ok(onServer(TPrivilegeLevel.ALTER))
+        .ok(onDatabase("functional", TPrivilegeLevel.ALL))
+        .ok(onDatabase("functional", TPrivilegeLevel.ALTER))
+        .ok(onTable("functional", "alltypes_view", TPrivilegeLevel.ALL))
+        .ok(onTable("functional", "alltypes_view", TPrivilegeLevel.ALTER))
+        .error(alterError("functional.alltypes_view"))
+        .error(alterError("functional.alltypes_view"), onServer(allExcept(
+            TPrivilegeLevel.ALL, TPrivilegeLevel.ALTER)))
+        .error(alterError("functional.alltypes_view"), onDatabase("functional", allExcept(
+            TPrivilegeLevel.ALL, TPrivilegeLevel.ALTER)))
+        .error(alterError("functional.alltypes_view"), onTable("functional",
+            "alltypes_view", allExcept(TPrivilegeLevel.ALL, TPrivilegeLevel.ALTER)));
   }
 
   @Test

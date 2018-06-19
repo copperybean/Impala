@@ -707,6 +707,14 @@ struct TGetCatalogUsageResponse{
   2: required list<TTableUsageMetrics> frequently_accessed_tables
 }
 
+struct TColumnName {
+  // Name of table/view.
+  1: required CatalogObjects.TTableName table_name
+
+  // Name of column.
+  2: required string column_name
+}
+
 struct TCommentOnParams {
   // Contents of comment to alter. When this field is not set, the comment will be removed.
   1: optional string comment
@@ -720,6 +728,9 @@ struct TCommentOnParams {
 
   // Name of table/view to alter.
   3: optional CatalogObjects.TTableName table_name
+
+  // Name of column to alter.
+  4: optional TColumnName column_name
 }
 
 // Response to GetCatalogServerMetrics() call.
