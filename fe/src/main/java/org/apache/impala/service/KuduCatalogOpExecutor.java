@@ -129,6 +129,9 @@ public class KuduCatalogOpExecutor {
       csb.typeAttributes(
           DecimalUtil.typeAttributes(type.getPrecision(), type.getDecimalDigits()));
     }
+    if (column.isSetComment() && !column.getComment().isEmpty()) {
+      csb.comment(column.getComment());
+    }
     return csb.build();
   }
 
@@ -275,7 +278,10 @@ public class KuduCatalogOpExecutor {
         }
         Type type =
             KuduUtil.toImpalaType(colSchema.getType(), colSchema.getTypeAttributes());
-        cols.add(new FieldSchema(colSchema.getName(), type.toSql().toLowerCase(), null));
+        String comment =
+            !colSchema.getComment().isEmpty() ? colSchema.getComment() : null;
+        cols.add(new FieldSchema(colSchema.getName(), type.toSql().toLowerCase(),
+            comment));
       }
     } catch (Exception e) {
       throw new ImpalaRuntimeException(String.format("Error loading schema of table " +
@@ -442,7 +448,6 @@ public class KuduCatalogOpExecutor {
       throws ImpalaRuntimeException {
     Preconditions.checkState(!Strings.isNullOrEmpty(colName));
     Preconditions.checkNotNull(newCol);
-    Preconditions.checkState(!newCol.isSetComment());
     Preconditions.checkState(!newCol.isIs_key());
     Preconditions.checkState(!newCol.isSetIs_nullable());
     if (LOG.isTraceEnabled()) {
@@ -477,6 +482,9 @@ public class KuduCatalogOpExecutor {
     String newColName = newCol.getColumnName();
     if (!newColName.toLowerCase().equals(colName.toLowerCase())) {
       alterTableOptions.renameColumn(kuduColName, newColName);
+    }
+    if (newCol.isSetComment()) {
+      alterTableOptions.changeComment(kuduColName, newCol.getComment());
     }
 
     String errMsg = String.format(
