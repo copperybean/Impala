@@ -99,6 +99,9 @@ DEFINE_int32(statestore_update_tcp_timeout_seconds, 300, "(Advanced) The time af
     "badly hung machines that are not able to respond to the update RPC in short "
     "order.");
 
+DEFINE_bool(statestore_local_isolation, false, "Implement local isolation by only notifying"
+    "membership of host which is same as subscriber");
+
 // Metric keys
 // TODO: Replace 'backend' with 'subscriber' when we can coordinate a change with CM
 const string STATESTORE_LIVE_SUBSCRIBERS = "statestore.live-backends";
@@ -250,6 +253,11 @@ void Statestore::Topic::BuildDelta(const SubscriberId& subscriber_id,
       }
       // Skip any entries that don't match the requested prefix.
       if (!HasPrefixString(itr->first, filter_prefix)) continue;
+      if (FLAGS_statestore_local_isolation &&
+          IMPALA_MEMBERSHIP_TOPIC == delta->topic_name && itr->first != subscriber_id) {
+        LOG(INFO) << "skipping " << itr->first << " for membership update";
+        continue;
+      }
 
       delta->topic_entries.push_back(TTopicItem());
       TTopicItem& delta_entry = delta->topic_entries.back();
