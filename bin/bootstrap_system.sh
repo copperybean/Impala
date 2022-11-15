@@ -237,7 +237,7 @@ redhat sudo yum clean all
 
 # Download ant for centos
 redhat sudo wget -nv \
-  https://www-us.apache.org/dist/ant/binaries/apache-ant-1.9.13-bin.tar.gz
+  https://archive.apache.org/dist/ant/binaries/apache-ant-1.9.13-bin.tar.gz
 redhat sha512sum -c - <<< 'c8321aa223f70d7e64d3d0274263000cfffb46fbea61488534e26f9f0245d99e9872d0888e35cd3274416392a13f80c748c07750caaeffa5f9cae1220020715f  apache-ant-1.9.13-bin.tar.gz'
 redhat sudo tar -C /usr/local -xzf apache-ant-1.9.13-bin.tar.gz
 redhat sudo ln -s /usr/local/apache-ant-1.9.13/bin/ant /usr/local/bin
@@ -246,7 +246,7 @@ redhat sudo ln -s /usr/local/apache-ant-1.9.13/bin/ant /usr/local/bin
 # pretty old.
 if [ ! -d /usr/local/apache-maven-3.5.4 ]; then
   sudo wget -nv \
-    https://www-us.apache.org/dist/maven/maven-3/3.5.4/binaries/apache-maven-3.5.4-bin.tar.gz
+    https://repo.maven.apache.org/maven2/org/apache/maven/apache-maven/3.5.4/apache-maven-3.5.4-bin.tar.gz 
   sha512sum -c - <<< '2a803f578f341e164f6753e410413d16ab60fabe31dc491d1fe35c984a5cce696bc71f57757d4538fe7738be04065a216f3ebad4ef7e0ce1bb4c51bc36d6be86 apache-maven-3.5.4-bin.tar.gz'
   sudo tar -C /usr/local -xzf apache-maven-3.5.4-bin.tar.gz
   sudo ln -s /usr/local/apache-maven-3.5.4/bin/mvn /usr/local/bin
@@ -414,6 +414,7 @@ echo ">>> Checking out Impala-lzo"
 if ! [[ -d "$IMPALA_LZO_HOME" ]]
 then
   git clone --branch master https://github.com/cloudera/impala-lzo.git "$IMPALA_LZO_HOME"
+  git checkout cdh5-trunk
 fi
 
 echo ">>> Checking out and building hadoop-lzo"
@@ -421,7 +422,7 @@ echo ">>> Checking out and building hadoop-lzo"
 : ${HADOOP_LZO_HOME:="${IMPALA_HOME}/../hadoop-lzo"}
 if ! [[ -d "$HADOOP_LZO_HOME" ]]
 then
-  git clone https://github.com/cloudera/hadoop-lzo.git "$HADOOP_LZO_HOME"
+  git clone https://github.com/copperybean/hadoop-lzo.git "$HADOOP_LZO_HOME"
 fi
 cd "$HADOOP_LZO_HOME"
 time -p ant package
