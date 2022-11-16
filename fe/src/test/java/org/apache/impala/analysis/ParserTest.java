@@ -3821,13 +3821,4 @@ public class ParserTest extends FrontendTestBase {
       ParserError(String.format("ALTER %s SET OWNER", type));
     }
   }
-
-  @Test
-  public void TestCommentOn() {
-    ParsesOk("COMMENT ON DATABASE db IS 'comment'");
-    ParsesOk("COMMENT ON DATABASE db IS ''");
-    ParsesOk("COMMENT ON DATABASE db IS NULL");
-    ParserError("COMMENT ON DATABASE IS 'comment'");
-    ParserError("COMMENT ON DATABASE db IS");
-  }
 }

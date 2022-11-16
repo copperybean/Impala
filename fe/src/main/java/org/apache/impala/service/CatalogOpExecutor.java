@@ -364,6 +364,21 @@ public class CatalogOpExecutor {
   }
 
   /**
+   * Create result set from string 'summary', and attach it to 'response'.
+   */
+  private static void addSummary(TDdlExecResponse response, String summary) {
+    TColumnValue resultColVal = new TColumnValue();
+    resultColVal.setString_val(summary);
+    TResultSet resultSet = new TResultSet();
+    resultSet.setSchema(new TResultSetMetadata(Lists.newArrayList(new TColumn(
+        "summary", Type.STRING.toThrift()))));
+    TResultRow resultRow = new TResultRow();
+    resultRow.setColVals(Lists.newArrayList(resultColVal));
+    resultSet.setRows(Lists.newArrayList(resultRow));
+    response.setResult_set(resultSet);
+  }
+
+  /**
    * Execute the ALTER TABLE command according to the TAlterTableParams and refresh the
    * table metadata, except for RENAME, ADD PARTITION and DROP PARTITION. This call is
    * thread-safe, i.e. concurrent operations on the same table are serialized.
@@ -3793,7 +3808,7 @@ public class CatalogOpExecutor {
       } else {
         msTbl.getParameters().put("comment", comment);
       }
-      applyAlterTable(msTbl, true);
+      applyAlterTable(msTbl);
       loadTableMetadata(tbl, newCatalogVersion, false, false, null);
       addTableToCatalogUpdate(tbl, response.result);
       addSummary(response, String.format("Updated %s.", (isView) ? "view" : "table"));
@@ -3825,7 +3840,7 @@ public class CatalogOpExecutor {
                 "Column name %s not found in table %s.", columnName, tbl.getFullName()));
           }
         }
-        applyAlterTable(msTbl, true);
+        applyAlterTable(msTbl);
       }
       loadTableMetadata(tbl, newCatalogVersion, false, true, null);
       addTableToCatalogUpdate(tbl, response.result);

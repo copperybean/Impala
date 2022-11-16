@@ -162,7 +162,7 @@ export IMPALA_KUDU_VERSION=cdh5-1.7.0_5.16.2
 unset IMPALA_KUDU_URL
 
 # Kudu version used to identify Java client jar from maven
-export KUDU_JAVA_VERSION=1.7.0-cdh5.16.2
+export KUDU_JAVA_VERSION=1.10.0
 
 # Versions of Hadoop ecosystem dependencies.
 # ------------------------------------------
